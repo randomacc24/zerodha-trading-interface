@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-matte-black text-matte-white font-sans;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  * {
+    @apply border-matte-light-gray;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-matte-light-gray hover:bg-matte-gray text-matte-white px-4 py-2 rounded-lg transition-all duration-200 font-medium;
+  }
+
+  .btn-secondary {
+    @apply bg-matte-gray hover:bg-matte-light-gray text-matte-white px-4 py-2 rounded-lg transition-all duration-200 font-medium;
+  }
+
+  .btn-success {
+    @apply bg-accent-green hover:bg-green-500 text-matte-black px-4 py-2 rounded-lg transition-all duration-200 font-medium;
+  }
+
+  .btn-danger {
+    @apply bg-accent-red hover:bg-red-500 text-matte-white px-4 py-2 rounded-lg transition-all duration-200 font-medium;
+  }
+
+  .card {
+    @apply bg-matte-gray rounded-lg p-6 border border-matte-light-gray;
+  }
+
+  .input-field {
+    @apply bg-matte-light-gray border border-matte-light-gray text-matte-white px-3 py-2 rounded-lg focus:outline-none focus:border-accent-blue transition-all duration-200;
+  }
+
+  .table-header {
+    @apply bg-matte-light-gray text-matte-white font-medium;
+  }
+
+  .table-row {
+    @apply border-b border-matte-light-gray hover:bg-matte-light-gray transition-all duration-200;
+  }
+} 
