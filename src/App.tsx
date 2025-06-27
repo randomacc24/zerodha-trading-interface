@@ -1,28 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import LoginForm from './components/LoginForm';
 import Dashboard from './components/Dashboard';
 import TradingPanel from './components/TradingPanel';
 import { zerodhaAPI } from './services/zerodhaApi';
+import axios from 'axios';
+
+const ZERODHA_API_KEY = '0picqbrzc7r96te5';
+const ZERODHA_API_SECRET = 'YOUR_API_SECRET_HERE'; // <-- Replace with your actual secret
+const REDIRECT_URI = 'https://randomacc24.github.io/zerodha-trading-interface/';
+
+function getRequestTokenFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('request_token');
+}
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [activeView, setActiveView] = useState<'dashboard' | 'trading'>('dashboard');
 
-  const handleLogin = async (apiKey: string, apiSecret: string) => {
+  useEffect(() => {
+    const requestToken = getRequestTokenFromUrl();
+    if (requestToken) {
+      handleZerodhaOAuth(requestToken);
+    }
+    // eslint-disable-next-line
+  }, []);
+
+  const handleZerodhaOAuth = async (requestToken: string) => {
     setIsLoading(true);
     try {
-      // Set credentials in the API service
-      zerodhaAPI.setCredentials({ apiKey, apiSecret });
-      
-      // Attempt to login (this would normally validate credentials)
-      await zerodhaAPI.login(apiKey, apiSecret);
-      
+      // Exchange request_token for access_token
+      const response = await axios.post('https://api.kite.trade/session/token', {
+        api_key: ZERODHA_API_KEY,
+        api_secret: ZERODHA_API_SECRET,
+        request_token: requestToken,
+      });
+      const accessToken = response.data.data.access_token;
+      zerodhaAPI.setCredentials({ apiKey: ZERODHA_API_KEY, apiSecret: ZERODHA_API_SECRET, accessToken });
       setIsAuthenticated(true);
+      // Remove request_token from URL
+      window.history.replaceState({}, document.title, REDIRECT_URI);
     } catch (error) {
-      console.error('Login failed:', error);
-      alert('Login failed. Please check your credentials.');
+      alert('Failed to authenticate with Zerodha. Please try again.');
+      setIsAuthenticated(false);
     } finally {
       setIsLoading(false);
     }
@@ -49,22 +71,19 @@ const App: React.FC = () => {
         product: 'CNC',
         order_type: 'LIMIT',
       });
-      
       alert(`Order placed successfully! ${order.type} ${order.quantity} ${order.symbol} at ₹${order.price}`);
     } catch (error) {
-      console.error('Failed to place order:', error);
       alert('Failed to place order. Please try again.');
     }
   };
 
   if (!isAuthenticated) {
-    return <LoginForm onLogin={handleLogin} isLoading={isLoading} />;
+    return <LoginForm isLoading={isLoading} />;
   }
 
   return (
     <div className="min-h-screen bg-matte-black">
       <Header isAuthenticated={isAuthenticated} onLogout={handleLogout} />
-      
       <div className="flex">
         {/* Sidebar Navigation */}
         <div className="w-64 bg-matte-gray border-r border-matte-light-gray min-h-screen">
@@ -93,7 +112,6 @@ const App: React.FC = () => {
             </nav>
           </div>
         </div>
-
         {/* Main Content */}
         <div className="flex-1">
           {activeView === 'dashboard' && <Dashboard />}

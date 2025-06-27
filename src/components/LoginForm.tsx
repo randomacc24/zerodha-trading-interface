@@ -1,97 +1,43 @@
-import React, { useState } from 'react';
-import { Lock, Eye, EyeOff } from 'lucide-react';
+import React from 'react';
+
+const ZERODHA_API_KEY = '0picqbrzc7r96te5';
+const REDIRECT_URI = 'https://randomacc24.github.io/zerodha-trading-interface/';
+
+const getZerodhaLoginUrl = () =>
+  `https://kite.zerodha.com/connect/login?v=3&api_key=${ZERODHA_API_KEY}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
 
 interface LoginFormProps {
-  onLogin: (apiKey: string, apiSecret: string) => void;
   isLoading: boolean;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({ onLogin, isLoading }) => {
-  const [apiKey, setApiKey] = useState('');
-  const [apiSecret, setApiSecret] = useState('');
-  const [showSecret, setShowSecret] = useState(false);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (apiKey && apiSecret) {
-      onLogin(apiKey, apiSecret);
-    }
+const LoginForm: React.FC<LoginFormProps> = ({ isLoading }) => {
+  const handleLogin = () => {
+    window.location.href = getZerodhaLoginUrl();
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-matte-black">
-      <div className="card w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="mx-auto w-16 h-16 bg-matte-light-gray rounded-full flex items-center justify-center mb-4">
-            <Lock size={32} className="text-accent-blue" />
-          </div>
-          <h2 className="text-2xl font-bold text-matte-white">Login to Zerodha</h2>
-          <p className="text-matte-white/70 mt-2">Enter your API credentials to access trading features</p>
+      <div className="card w-full max-w-md text-center">
+        <div className="mx-auto w-16 h-16 bg-matte-light-gray rounded-full flex items-center justify-center mb-4">
+          <img src="https://kite.trade/static/images/kite-logo.svg" alt="Kite Logo" className="h-10" />
         </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="apiKey" className="block text-sm font-medium text-matte-white mb-2">
-              API Key
-            </label>
-            <input
-              id="apiKey"
-              type="text"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              className="input-field w-full"
-              placeholder="Enter your Zerodha API Key"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="apiSecret" className="block text-sm font-medium text-matte-white mb-2">
-              API Secret
-            </label>
-            <div className="relative">
-              <input
-                id="apiSecret"
-                type={showSecret ? 'text' : 'password'}
-                value={apiSecret}
-                onChange={(e) => setApiSecret(e.target.value)}
-                className="input-field w-full pr-10"
-                placeholder="Enter your Zerodha API Secret"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowSecret(!showSecret)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-matte-white/70 hover:text-matte-white"
-              >
-                {showSecret ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={isLoading || !apiKey || !apiSecret}
-            className="btn-success w-full flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-matte-black"></div>
-                <span>Connecting...</span>
-              </>
-            ) : (
-              <span>Connect to Zerodha</span>
-            )}
-          </button>
-        </form>
-
-        <div className="mt-6 p-4 bg-matte-light-gray rounded-lg">
-          <h3 className="text-sm font-medium text-matte-white mb-2">How to get API credentials:</h3>
-          <ol className="text-xs text-matte-white/70 space-y-1">
-            <li>1. Log in to your Zerodha Kite account</li>
-            <li>2. Go to Developer Console</li>
-            <li>3. Create a new API application</li>
-            <li>4. Copy your API Key and Secret</li>
+        <h2 className="text-2xl font-bold text-matte-white mb-2">Login with Zerodha</h2>
+        <p className="text-matte-white/70 mb-8">Click below to securely login to your Zerodha account.</p>
+        <button
+          onClick={handleLogin}
+          disabled={isLoading}
+          className="btn-success w-full flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed text-lg py-3"
+        >
+          <img src="https://kite.trade/static/images/kite-logo.svg" alt="Kite" className="h-6 mr-2" />
+          <span>Login with Zerodha</span>
+        </button>
+        <div className="mt-8 p-4 bg-matte-light-gray rounded-lg text-left">
+          <h3 className="text-sm font-medium text-matte-white mb-2">How it works:</h3>
+          <ol className="text-xs text-matte-white/70 space-y-1 list-decimal list-inside">
+            <li>Click "Login with Zerodha"</li>
+            <li>Login securely on the official Zerodha Kite page</li>
+            <li>After login, you'll be redirected back here</li>
+            <li>We never ask for your API key or secret</li>
           </ol>
         </div>
       </div>
