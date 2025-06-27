@@ -1,7 +1,7 @@
 import React from 'react';
 
 const ZERODHA_API_KEY = '0picqbrzc7r96te5';
-const REDIRECT_URI = 'https://randomacc24.github.io/zerodha-trading-interface/';
+const REDIRECT_URI = 'https://randomacc24.github.io/zerodha-trading-interface/#/';
 
 const getZerodhaLoginUrl = () =>
   `https://kite.zerodha.com/connect/login?v=3&api_key=${ZERODHA_API_KEY}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
