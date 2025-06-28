@@ -7,7 +7,6 @@ import { zerodhaAPI } from './services/zerodhaApi';
 import axios from 'axios';
 
 const ZERODHA_API_KEY = '0picqbrzc7r96te5';
-const ZERODHA_API_SECRET = '1u36cwfhskqtfjrtpa4es6r3xlrfgv8r'; // <-- Replace with your actual secret
 const REDIRECT_URI = 'https://randomacc24.github.io/zerodha-trading-interface/#/';
 
 function getRequestTokenFromUrl() {
@@ -45,14 +44,12 @@ const App: React.FC = () => {
   const handleZerodhaOAuth = async (requestToken: string) => {
     setIsLoading(true);
     try {
-      // Exchange request_token for access_token
-      const response = await axios.post('https://api.kite.trade/session/token', {
-        api_key: ZERODHA_API_KEY,
-        api_secret: ZERODHA_API_SECRET,
+      // Exchange request_token for access_token via backend
+      const response = await axios.post('/api/zerodha/token', {
         request_token: requestToken,
       });
       const accessToken = response.data.data.access_token;
-      zerodhaAPI.setCredentials({ apiKey: ZERODHA_API_KEY, apiSecret: ZERODHA_API_SECRET, accessToken });
+      zerodhaAPI.setCredentials({ apiKey: ZERODHA_API_KEY, apiSecret: '', accessToken });
       setIsAuthenticated(true);
       // Remove request_token from URL
       window.history.replaceState({}, document.title, REDIRECT_URI);
