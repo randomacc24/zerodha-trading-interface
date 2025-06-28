@@ -7,12 +7,26 @@ import { zerodhaAPI } from './services/zerodhaApi';
 import axios from 'axios';
 
 const ZERODHA_API_KEY = '0picqbrzc7r96te5';
-const ZERODHA_API_SECRET = 'YOUR_API_SECRET_HERE'; // <-- Replace with your actual secret
-const REDIRECT_URI = 'https://randomacc24.github.io/zerodha-trading-interface/';
+const ZERODHA_API_SECRET = '1u36cwfhskqtfjrtpa4es6r3xlrfgv8r'; // <-- Replace with your actual secret
+const REDIRECT_URI = 'https://randomacc24.github.io/zerodha-trading-interface/#/';
 
 function getRequestTokenFromUrl() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get('request_token');
+  // Check both search and hash for request_token
+  const searchParams = new URLSearchParams(window.location.search);
+  if (searchParams.get('request_token')) {
+    return searchParams.get('request_token');
+  }
+  // If using hash routing, parse the hash
+  if (window.location.hash) {
+    // Example: #/?request_token=xxxx&action=login
+    const hash = window.location.hash.substring(1); // remove '#'
+    const hashQuery = hash.split('?')[1];
+    if (hashQuery) {
+      const hashParams = new URLSearchParams(hashQuery);
+      return hashParams.get('request_token');
+    }
+  }
+  return null;
 }
 
 const App: React.FC = () => {
